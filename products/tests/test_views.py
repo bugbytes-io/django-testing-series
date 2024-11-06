@@ -26,7 +26,7 @@ class TestProfilePage(TestCase):
 
         # Check if the user's username is in the response content
         self.assertContains(response, 'testuser')
-        
+
 class TestHomePage(SimpleTestCase):
 
     def test_homepage_uses_correct_template(self):
@@ -68,3 +68,52 @@ class TestProductsPage(TestCase):
         response = self.client.get(reverse('products'))
         self.assertEqual(len(response.context['products']), 0)
         self.assertContains(response, 'No products available')
+
+from unittest.mock import patch
+import requests
+
+class PostsViewTest(TestCase):
+
+    @patch('products.views.requests.get')
+    def test_post_view_success(self, mock_get):
+        """Test that the posts view returns valid JSON for a successful response."""
+        
+        # Simulate a successful response with status code 200
+        mock_get.return_value.status_code = 200
+        return_data = {
+            "userId": 1,
+            "id": 1,
+            "title": "Test Title",
+            "body": "Test Body"
+        }
+        mock_get.return_value.json.return_value = return_data
+
+        # Send a request to the view
+        response = self.client.get(reverse('post'))
+
+        # Check if the response status is 200 (OK)
+        self.assertEqual(response.status_code, 200)
+
+        # Check that the view returns the mocked JSON data
+        self.assertJSONEqual(response.content, return_data)
+
+        # Ensure that the mock API call was made once with the correct URL
+        mock_get.assert_called_once_with('https://jsonplaceholder.typicode.com/posts/1')
+
+
+    @patch('products.views.requests.get')
+    def test_post_view_fail(self, mock_get):
+        """Test that the posts view returns 503 on HTTP errors."""
+
+        # Simulate a failure (e.g., a network error)
+        # https://docs.python.org/3/library/unittest.mock.html#unittest.mock.Mock.side_effect
+        mock_get.side_effect = requests.exceptions.RequestException
+
+        # Send a request to the view
+        response = self.client.get(reverse('post'))
+
+        # Check that the view returns a 503 Service Unavailable status code
+        self.assertEqual(response.status_code, 503)
+
+        # Ensure the external API was called once
+        mock_get.assert_called_once_with('https://jsonplaceholder.typicode.com/posts/1')
