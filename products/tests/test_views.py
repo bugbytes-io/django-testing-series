@@ -1,4 +1,4 @@
-from django.test import SimpleTestCase, TestCase
+from django.test import SimpleTestCase, TestCase, tag
 from django.urls import reverse
 from products.models import Product, User
 
@@ -10,6 +10,7 @@ class TestProfilePage(TestCase):
         # Check if the user was redirected to the login page
         self.assertRedirects(response, f"{reverse('login')}?next={reverse('profile')}")
 
+    @tag('auth')
     def test_profile_view_accessible_for_authenticated_users(self):
         """Test that authenticated users can access the profile view and see their username."""
         # Create a test user
