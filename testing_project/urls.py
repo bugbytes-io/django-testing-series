@@ -7,4 +7,6 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path('', views.homepage, name='home'),
     path('products/', views.products, name='products'),
+    path('profile/', views.profile, name='profile'),
+    path('login/', views.login, name='login'),
 ]
