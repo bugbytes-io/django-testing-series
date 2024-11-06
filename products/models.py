@@ -13,6 +13,13 @@ class Product(models.Model):
     price = models.DecimalField(max_digits=10, decimal_places=2)
     stock_count = models.IntegerField(default=0)
 
+    class Meta:
+        constraints = [
+            models.CheckConstraint(condition=models.Q(price__gte=0), name='price_gt_0'),
+            models.CheckConstraint(condition=models.Q(stock_count__gte=0), name='stock_gt_0'),
+        ]
+
+
     def clean(self):
         if self.price < 0:
             raise ValidationError('Price cannot be negative')
