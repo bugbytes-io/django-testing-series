@@ -18,13 +18,6 @@ class Product(models.Model):
             models.CheckConstraint(condition=models.Q(price__gte=0), name='price_gt_0'),
             models.CheckConstraint(condition=models.Q(stock_count__gte=0), name='stock_gt_0'),
         ]
-
-
-    def clean(self):
-        if self.price < 0:
-            raise ValidationError('Price cannot be negative')
-        if self.stock_count < 0:
-            raise ValidationError('Stock count cannot be negative')
         
     def get_discount_price(self, discount_percentage):
         """Calculate and return the discounted price."""

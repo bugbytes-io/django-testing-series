@@ -25,18 +25,6 @@ class ProductModelTest(TestCase):
         self.assertEqual(self.product.get_discount_price(50), 50.00)  # 50% discount should be $50
         self.assertEqual(self.product.get_discount_price(0), 100.00)  # 0% discount should return original price
 
-    def test_negative_price_validation(self):
-        """Test that a product with a negative price raises a ValidationError."""
-        product = Product(name="Negative Price Product", price=-10.00, stock_count=5)
-        with self.assertRaises(ValidationError):
-            product.clean()  # This should raise a ValidationError due to negative price
-
-    def test_negative_stock_count_validation(self):
-        """Test that a product with a negative stock count raises a ValidationError."""
-        product = Product(name="Negative Stock Product", price=10.00, stock_count=-5)
-        with self.assertRaises(ValidationError):
-            product.clean()  # This should raise a ValidationError due to negative stock count
-
     def test_negative_price_constraint(self):
         """Test that a product with a negative price cannot be saved due to the database constraint."""
         product = Product(name="Negative Price Product", price=-1.00, stock_count=5)

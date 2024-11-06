@@ -4,6 +4,15 @@
 
     <h1>View products</h1>
 
+    <form method="POST">
+        {% csrf_token %}
+        {{ form.as_div }}
+    
+        <button type="submit" style="margin: 5px 0">Submit</button>
+    </form>
+    
+    <hr />    
+
     {% for product in products %}
         <p>{{ product.name }}</p>
     {% empty %}
